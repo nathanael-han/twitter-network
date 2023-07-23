@@ -1,0 +1,50 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <h3 id = "ap_header">All Posts</h3>
+    {% if user.is_authenticated %}
+        {% for post in page_obj %}
+            <div class = "posts"> 
+                <a href= {% url 'user_page' post.author.id %}><p class = "post_user">{{post.author}}</p></a>
+                <hr>
+                {% if request.user == post.author %}
+                    <h6 id = "edit_link" onclick="editPost({{ post.id }})">Edit</h6>
+                    {% comment %} <form id = "edit_form" action="{% url 'new_posts'%}" method = "POST">
+                        {% csrf_token %}
+                        {{form}}
+                        <input type="submit" name = "new_post" value = "Edit">
+                    </form> {% endcomment %}
+                {% endif %}
+                <p class = "post_text">{{post.post}}</p>
+                <hr>
+                <p class = "post_time">{{post.timestamp}}</p>
+                <span class="like-count" data-post="{{ post.id }}">
+                    <button type="button" class="btn btn-outline-info" id="like" onclick="likePost({{ request.user.id }}, {{ post.id }})"><p class = "heart">&#9829;</p></button>
+                </span>
+                <span class="unlike-count" data-post="{{ post.id }}">
+                    <button type="button" class="btn btn-outline-info" id="unlike" onclick="unlikePost({{ request.user.id }}, {{ post.id }})"><p class = "heart">&#9825;</p></button>
+                </span>
+                <span id="likes_count"> {{ post.likes.count }} </span>
+            </div>
+        {% endfor %}
+        {% comment %} source: https://docs.djangoproject.com/en/4.0/topics/pagination/
+        {% endcomment %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&#8678; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last &#8680;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <h3 id = "ap_header">New Posts</h3>
+    {% if user.is_authenticated %}
+    <div class = "post_form">
+        <h3>New Post</h3>
+        <form action="{% url 'new_posts'%}" method = "POST" >
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" name = "new_post" value = "Post">
+        </form>
+    </div>
+    {% endif %} 
+{% endblock %}
